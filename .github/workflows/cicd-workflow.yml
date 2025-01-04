@@ -52,16 +52,20 @@ jobs:
         env:
           SHORT_SHA: ${{ env.SHORT_SHA }}
 
-      # Step 9: Set up Google Cloud SDK
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
+      # Step 9: Authenticate with Google Cloud
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v0.4.0
         with:
-          project_id: springboot-githubactions-gke
-          service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
-      # Step 10: Authenticate kubectl
-      - name: Authenticate kubectl
-        run: gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone ${{ secrets.ZONE }} --project ${{ secrets.PROJECT_ID }}
+      # Step 10: Configure gcloud
+      - name: Configure gcloud
+        run: |
+          gcloud config set project ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          gcloud config set compute/zone ${{ secrets.ZONE }}
+          gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }}
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
       # Step 11: Deploy to GKE
       - name: Deploy to GKE
