@@ -76,7 +76,16 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
       # Step 12: Deploy to GKE
-      - name: Deploy to GKE
+      - name: Verify Kubernetes manifests
+        run: |
+          ls -la k8s/
+          cat k8s/postgres-deployment.yaml
+          cat k8s/contact-app-deployment.yaml
+
+      - name: Apply Kubernetes configuration
         run: |
           kubectl apply -f k8s/postgres-deployment.yaml
           kubectl apply -f k8s/contact-app-deployment.yaml
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
