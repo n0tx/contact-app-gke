@@ -45,7 +45,8 @@ jobs:
       # Step 8: Run envsubst
       - name: Run envsubst
         run: |
-          apk add --no-cache gettext
+          sudo apt-get update
+          sudo apt-get install gettext-base -y
           envsubst < k8s/contact-app-deployment.yaml > k8s/contact-app-deployment.yaml
         shell: bash
         env:
