@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: contact-app-gke
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: contact-app-gke
+  template:
+    metadata:
+      labels:
+        app: contact-app-gke
+    spec:
+      containers:
+        - name: contact-app-gke
+          image: rcandra612/contact-app-gke:v1-$SHORT_SHA
+
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres-service:5432/contact
+            - name: SPRING_DATASOURCE_USERNAME
+              value: springboot
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: springboot
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: contact-app-gke-service
+spec:
+  selector:
+    app: contact-app-gke
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
