@@ -44,9 +44,10 @@ jobs:
 
       # Step 8: Run envsubst
       - name: Run envsubst
-        uses: docker://gcr.io/cloud-builders/envsubst
-        with:
-          args: k8s/contact-app-deployment.yaml
+        run: |
+          apk add --no-cache gettext
+          envsubst < k8s/contact-app-deployment.yaml > k8s/contact-app-deployment.yaml
+        shell: bash
         env:
           SHORT_SHA: ${{ env.SHORT_SHA }}
 
